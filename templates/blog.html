@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}Home{%endblock%}
+{% block content%}
+
+<section class="container-fluid p-5" style="background-color:#f8f9fa ;">
+    <br><br>
+    <h1 class="h1 heading">Get data from Twitter API in Python – Step by Step Guide</h1>
+    <br>
+    <p>Twitter is one of the most prominent social networks in our current day and age. With people, from commoners to
+        public figures using it as a medium to share their thoughts and opinions, it is a rich source of data. The
+        Twitter API lets you “Programmatically analyze, learn from, and engage with conversation on Twitter”. In this
+        tutorial, we’ll cover how you can use the Twitter API in Python to access data for your own analysis.
+
+        Note: If you’re looking to get data from Twitter API v2 check out our new tutorial. However, if you’re
+        interested in extracting data from Twitter API v1.1 continue with the tutorial.
+
+    </p>
+
+    <h1 class="h1 sub-head">1. Get access to the Twitter API</h1>
+    <p>To make any request to the Twitter API (in python or anywhere else) you require your API Key and Access Token.
+        For this, you need to apply for a developer account with Twitter and have your account approved. Once approved,
+        you can create a project and associate it with a sample App.
+        This App will provide you with your API Key and Access Token which you can use to authenticate and use the
+        Twitter API.</p>
+
+    <h1 class="h1 sub-head">1.1 Apply for a developer account with Twitter</h1>
+    <h4>To apply for a developer account with Twitter –</h4>
+    <ul>
+        <li>Navigate to Twitter’s apply for access page and apply for a developer account.</li>
+        <div class="container p-3">
+            <img class="container-fluid" src="{% static 'images/image1.png.webp' %}" alt="My image">
+        </div>
+
+        <li>
+            <p>
+                After logging in you’ll be navigated to a questionnaire on why and how you intend to use the Twitter
+                API. Fill it according to your use-case.
+                If you’re a hobbyist using it to explore the API select Exploring the API under the Hobbyist column.
+            </p>
+        </li>
+        <li>
+            <p>You’ll be navigated to login to your Twitter account. Login to your account. If you do not have a Twitter
+                account sign up for one.</p>
+        </li>
+        <div class="container p-3">
+            <img class="container-fluid" src="{% static 'images/login.png.webp' %}" alt="My image">
+        </div>
+        <li>
+            <p>Answer all the follow-up questions.</p>
+        </li>
+        <li>
+            <p>
+                Review the Developer Agreement and Policy and Submit your Application.
+            </p>Analyzing public sentiment towards
+        </li>
+        <li>
+            <p>Check your email and click the confirmation link to complete the application process.</p>
+        </li>
+    </ul>
+    <div>
+
+    </div>
+    <h1 class="h1 sub-head">1.2 Get your Twitter API Key and Access Token</h1>
+    <p>Generally, if Twitter doesn’t find anything off with your application, you’d be able to access your developer
+        account immediately after completing your application process. Now, to get your API Key and Access Token follow
+        the steps –
+
+    </p>
+    <ul>
+        <li>
+            <p>
+                On clicking the confirmation email from the above application step, you’ll be navigated to the Twitter
+                Developer Platform.
+            </p>
+        </li>
+        <div class="container p-3">
+            <img class="container-fluid" src="{% static 'images/image-5-768x537.png.webp' %}" alt="My image">
+        </div>
+
+        <li>
+            <p>Give your App a name and click Get keys.</p>
+        </li>
+        <li>
+            <p>You’ll be shown your API key and API secret key. Copy and save them securely. You’ll be using them to
+                access the Twitter API.</p>
+                <div class="container p-3">
+                    <img class="container-fluid" src="{% static 'images/image-6-768x348.png.webp' %}" alt="My image">
+                </div>
+            <p>Having secured the Twitter API key and secret you can move on to the python IDE of your choice for using
+                it to access data from the Twitter API.</p>
+        </li>
+
+    </ul>
+    <div> 
+        <h1 class="h1 sub-head">2. Fetch data from Twitter API in Python</h1>
+        <p>There are a number of ways to access data from the Twitter API in Python, for this tutorial, we’ll be using
+            the
+            tweepy python library which makes it easy to connect to and fetch data from the Twitter API. In this
+            tutorial,
+            we’ll be fetching the tweets with a specific hashtag (#covid19) from the API.</p>
+        <p>If you do not have the tweepy library you can install it using the command:</p>
+        <div class="container p-3">
+            <img class="container-fluid" src="{% static 'images/1.1.jpg' %}" alt="My image">
+        </div>
+        
+        <p>This will install the Tweepy library which comes with a whole range of functionality on fetching data from
+            the
+            Twitter API. Its API class provides access to the entire Twitter RESTful API methods. Each method can accept
+            various parameters and return responses.
+
+            For more, refer to <a href="http://docs.tweepy.org/en/latest/index.html">tweepy’s documentation.</a></p>
+        <div>
+            <h1 class="h1 sub-head">2.2 Authenticate with your credentials</h1>
+            <p>Open up your preferred python environment (eg. Jupyter Notebook, Spyder, etc) and use your Twitter API
+                credentials to authenticate and connect to the API.</p>
+                <div class="container p-3">
+                    <img class="container-fluid" src="{% static 'images/1.2.jpg' %}" alt="My image">
+                </div>
+            <p>Use your Twitter API key and secret key as values for variables my_api_key and my_api_secret
+                respectively.
+                Then, initialize the tweepy OAuthHandler with the API key and the API secret and use it to get an
+                instance
+                of tweepy API class using which you’ll be making requests to the Twitter API.</p>
+
+        </div>
+    </div>
+    <div>
+        <h1 class="h1 sub-head">2.4 Collect the Tweets</h1>
+        <p>We use the Tweepy Cursor to fetch the tweets. It returns an object which can be iterated over to get the API
+            responses. We fetch 50 tweets for the search query specified above.</p>
+            <div class="container p-3">
+                <img class="container-fluid" src="{% static 'images/1.4.jpg' %}" alt="My image">
+            </div>
+        <p>Here, we pass as an argument the api.search object, the search query, the language of the tweets, and the
+            date from which to search the tweets. We also limit the number of items (i.e. tweets in this case to 50).
+            The responses are iterated over and saved to the list tweets_copy.</p>
+
+    </div>
+    <div>
+        <h1 class="h1 sub-head">2.5 Create a dataset</h1>
+        <p>We now create a dataset (a pandas dataframe) using the attributes of the tweets received from the API.</p>
+        
+        <h3>Output</h3>
+        <p>Here, the dataframe tweets_df is populated with different attributes of the Tweet like the username, user’s
+            location, the user’s description, tweet’s timing, tweet’s text, hashtag, etc.
+
+            Also, note that for the tweet’s text we’re not using tweet.text rather we’re calling the API again with the
+            tweet id and fetching its full text. This is because tweet.text does not contain the full text of the Tweet.
+
+            Having the data stored as a dataframe is quite useful for further analysis and reference.</p>
+
+    </div>
+    <div>
+        <h1 class="h1 sub-head">References</h1>
+        <h3><a href="https://developer.twitter.com/en/docs/twitter-api/getting-started/guide">Getting Started with
+                Twitter API</a></h3>
+    </div>
+
+</section>
+
+{%endblock%}

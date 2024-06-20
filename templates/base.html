@@ -1,0 +1,399 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Polarity Analysis</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    .font-size {
+      font-size: 28px;
+      text-transform: capitalize;
+    }
+
+    .nav-links {
+      padding-left: 35% !important;
+      width: 100% !important;
+      font-size: 28px !important;
+    }
+
+    .menu {
+      font-size: 26px !important;
+    }
+
+    .heading {
+      color: #e13e57;
+      color: #e13e57;
+    }
+
+    .nav-style {
+      font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+        sans-serif;
+      background-color: #000000;
+      color: whitesmoke;
+    }
+
+    .logo {
+      font-size: 30px;
+      color: #add8e6;
+      font-family: Serif;
+      margin-left: 5%;
+    }
+
+    .nev-menu {
+      width: 100% !important;
+    }
+
+    .logoutbtn {
+      text-decoration: none;
+      list-style-type: none;
+      color: whitesmoke;
+      background-color: #52ab97;
+      border-radius: 4px;
+      font-size: 24px;
+    }
+
+    .classifyTweet {
+      display: flex;
+      width: 600px;
+      gap: 5px;
+    }
+
+    .sub-head {
+      font-size: 24px;
+      color: #e13e57;
+    }
+
+    .regform {
+      font-size: 22px;
+      color: cornsilk;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .overallbody {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .c_nav {
+      background-color: #e3def4;
+    }
+
+    .c_nav_style {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Set body height to 100% */
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lang_drop {
+      background-color: #E3DEF4;
+    }
+
+    /* Create a wrapper div for the content */
+    .wrapper {
+      background-color: #f8f9fa;
+      border: none;
+      flex: 1;
+      padding-bottom: 75px;
+      /* Set padding to accommodate the footer */
+    }
+
+    /* Set the footer at the bottom */
+    .footer {
+      /* position: fixed;
+        left: 0;
+        bottom: 0; */
+      width: 100%;
+      background-color: #e3def4;
+      color: black;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .card-grid {
+      margin-top: 20px;
+    }
+
+    .card-body {
+      background-color: #e3def4 !important;
+    }
+
+    .btn-bg {
+      background-color: #ed9273;
+    }
+
+    .classify_btn {
+      background-color: #e3def4;
+      height: 38px;
+      border: none;
+      color: black;
+    }
+
+    .landing_content {
+      justify-content: center;
+    }
+
+    .cards_sections {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-left: 60px;
+
+    }
+  </style>
+</head>
+
+<body style="color: gray" class="overallbody">
+  <!-- Menu Bar Start  -->
+  <nav class="navbar navbar-expand-lg navbar-info text-dark p-0 c_nav">
+    <div class="container-fluid">
+      <a class="navbar-brand menu logo text-dark" href="base">Profile Identification</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown"
+        aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse c_nav_style" id="navbarNavDarkDropdown">
+        <ul class="navbar-nav nav-links">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle menu text-dark" href="singleuser" id="navbarDarkDropdownMenuLink"
+              role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              English Tweets
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
+              <li>
+                <a class="dropdown-item menu text-dark" href="singleuser">User Analysis</a>
+              </li>
+              <li>
+                <a class="dropdown-item menu text-dark" href="followers">Followings Analysis</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle menu text-dark" href="urduuser" id="navbarDarkDropdownMenuLink"
+              role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Urdu Tweets
+            </a>
+            <ul class="dropdown-menu text-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+              <li>
+                <a class="dropdown-item menu text-dark" href="urduuser">User Analysis</a>
+              </li>
+              <li>
+                <a class="dropdown-item menu text-dark" href="urdufollowings">Followings Analysis</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-dark menu" href="facebook" id="navbarDarkDropdownMenuLink"
+              role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Facebook
+            </a>
+            <ul class="dropdown-menu text-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+              <li>
+                <a class="dropdown-item menu text-dark" href="facebook">User Analysis</a>
+              </li>
+              <li>
+                <a class="dropdown-item menu text-dark" href="facebookurdu">User Analysis</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <div>
+          <li class="nav-item logoutbtn">
+            <a class="logoutbtn nav-link btn p-1 text-dark" href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+          </li>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- Menu bar End -->
+
+  {% block content%}
+  <div class="wrapper">
+    <section class="container-fluid border" style="background-color: #f8f9fa">
+      <section class="d-flex">
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col">
+          <img src="{% static 'images/homeimg.png' %}" class="img-fluid landingpage m-5 rounded" />
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col">
+          <h1 class="text-left" style="font-size: 45px; letter-spacing: 2px; margin-top: 30px;">
+
+            Analyzing Public Sentiment Towards Government on Twitter and
+            Facebook Using Deep Learning
+          </h1>
+
+          <h5 class="">Want to Classify Tweet?</h5>
+          <p>Write sentences/words to classify</p>
+          <form method="post" action="{% url 'classify_tweet' %}" class="classifyTweet">
+            {% csrf_token %}
+            <div class="mb-3">
+              <input type="text" class="form-control" placeholder="Enter Tweet to classify" name="tweet" id="tweet" />
+            </div>
+            <input type="hidden" name="language" id="language" value="" />
+            <br />
+            <div class="dropdown">
+              <a class="btn dropdown-toggle lang_drop" href="#" role="button" id="dropdownMenuLink"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Select Language
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li><a class="dropdown-item" href="#" onclick="setLanguage('English')">English</a></li>
+                <li><a class="dropdown-item" href="#" onclick="setLanguage('Urdu')">Urdu</a></li>
+              </ul>
+            </div>
+            <div>
+              <button type="submit" class="btn btn-sm btn-success classify_btn">
+                Classify-Tweet
+              </button>
+            </div>
+
+
+
+          </form>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead class="table-head">
+                <tr>
+                  <th>Tweet</th>
+                  <th>Score</th>
+                  <th>Class Label</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for key, sent in result.items %}
+                <tr>
+                  <td>{{sent.0}}</td>
+                  <td>{{sent.1}}</td>
+                  <td>{{sent.2}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <script>
+            function setLanguage(lang) {
+              document.getElementById("language").value = lang;
+            }
+          </script>
+
+
+
+        </div>
+
+      </section>
+    </section>
+    <section class="d-flex cards_sections">
+      <div class="row card-grid">
+        <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xxl-4 grid-col">
+          <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Single User (English Tweets)</h5>
+              <p class="card-text">
+                Profile Identification of English single user on Twitter using
+                BERT and CNN
+              </p>
+              <a href="{% url 'singleuser' %}" class="btn btn-bg">CLick Here</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xxl-4 grid-col">
+          <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Single user(Urdu Tweets)</h5>
+              <p class="card-text">
+                Profile Identification of Urdu single user on Twitter using
+                BERT and CNN
+              </p>
+              <a href="urduusers.html" class="btn btn-bg">Click Here</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xxl-4 grid-col">
+          <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">User Followings(English Tweets)</h5>
+              <p class="card-text">
+                Profile's Identification of English User Following on Twitter
+                using BERT and CNN
+              </p>
+              <a href="following.html" class="btn btn-bg">Click Here</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="d-flex cards_sections">
+      <div class="row card-grid">
+        <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xxl-4 grid-col my-6">
+          <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">User Followings(Urdu Tweets)</h5>
+              <p class="card-text">
+                Profile's Identification of Urdu User Following on Twitter
+                using BERT and CNN
+              </p>
+              <a href="urdufollowings.html" class="btn btn-bg">Click Here</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xxl-4 grid-col my-6">
+          <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Facebook (English Posts)</h5>
+              <p class="card-text">
+                Profile's Identification of Urdu User Following on facebook
+                using BERT and CNN
+              </p>
+              <a href="facebook.html" class="btn btn-bg">Click Here</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xxl-4 grid-col my-6">
+          <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Facebook (Urdu Posts)</h5>
+              <p class="card-text">
+                Profile's Identification on facebook of Urdu User using BERT
+                and CNN
+              </p>
+              <a href="#" class="btn btn-bg">Click Here</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  {% endblock %}
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container-fluid">© 2020 CodeIk</div>
+  </footer>
+  <!-- Footer End -->
+</body>
+
+</html>
+<script>
+  function setLanguage(language) {
+    document.getElementById('language').value = language;
+    document.getElementById('dropdownMenuLink').textContent = language; // Update the dropdown toggle button text
+  }
+</script>

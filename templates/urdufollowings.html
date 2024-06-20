@@ -1,0 +1,704 @@
+{%extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <style>
+        .th-head {
+            font-size: 22px;
+            color: #ffffff
+        }
+        .section-1 {
+    font-size: 1em;
+    /* Increase the font size */
+    font-family: Arial, sans-serif;
+    /* Set the font family */
+    color: #333;
+    /* Set the text color to a dark gray */
+   
+    /* Set the background color to a light gray */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    /* Add a subtle text shadow */
+  }
+.resultss{
+  border: 2px #0DCAF0 solid;
+  border-radius: 10px;
+  padding: 3px;
+  height: 20px;
+  width: 20px;
+}
+        .button {
+            /* position: relative;
+  padding: 8px 16px;
+  background: #009579;
+  border: none;
+  outline: none;
+  border-radius: 2px;
+  cursor: pointer; */
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid blue;
+            border-right: 16px solid green;
+            border-bottom: 16px solid red;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+        .sentiment-chart {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+        .button:active {
+            background: #007a63;
+        }
+
+        .button__text {
+            font: bold 20px "Quicksand", san-serif;
+            color: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .button--loading .button__text {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .button--loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 4px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        body {
+            font: Arial 12px;
+            text-align: center;
+        }
+
+        .link {
+            stroke: #ccc;
+        }
+
+        .node text {
+            pointer-events: none;
+            font: sans-serif;
+        }
+
+        #info {
+            background-color: white;
+            padding: 5px;
+            border: 1px solid black;
+            font-size: 14px;
+            color: black;
+        }
+        .h1 {
+    font-size: 2em;
+    /* Increase the font size */
+    font-family: Arial, sans-serif;
+    /* Set the font family */
+    color: #03A9F4;
+    /* Set the text color to a dark gray */
+
+    /* Set the background color to a light gray */
+    text-shadow: 15px 15px 15px rgba(0, 0, 0, 0.1);
+    /* Add a subtle text shadow */
+    text-align: center;
+    padding-top: 5px;
+  }
+ .logoutbtn{
+  width: max-content;
+  background-color: #E3DEF4;
+  border: none !important;
+  margin-left: 10px;
+  height: 40px;
+  color: black;
+  justify-content: center;
+  align-items: center;
+
+ }
+ .twi-img{
+  height: 200px;
+  width:200px ;
+  justify-content: left;
+ }
+ .table-head{
+  background-color: #E3DEF4;
+  color: black;
+ }
+ .cus-div{
+border-color: #E3DEF4;
+padding: 0px;
+ }
+    </style>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<body style="color:#ffffff">
+
+
+    <div class="container-fluid bg-light p-2 ">
+      
+        <!-- <div class="container-fluid">
+            
+                <img class="container-fluid" src="{% static 'images/newbg.png' %}" alt="My image">
+                
+            </div> 
+            <br><br> -->
+            <section class="row">
+        
+        
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xxl-12 grid-col d-flex flex-row gap-5">
+                  <div class="d-flex ">
+                    <img class="img-fluid twi-img" src="/static/images/twiterlogo.png" />
+                    <h2 class="h1 mt-5">User's Followings Identification on Twitter</h2>
+                  </div>
+                
+                
+                  <div class="rounded mt-5" style="margin-left: 15%;">
+                    <ul class="nav nav-tabs d-flex" id="myTab" role="tablist">
+                      <!-- <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                          role="tab" aria-controls="home" aria-selected="true">Fetch Tweets
+                        </button>
+                      </li> -->
+              
+                      <li>
+                        <p style="font-size: 20px; margin: 5px; margin-left: 15%;"></p>
+                        <form action="" method="post">
+                          {% csrf_token %}
+                          <div class="mb-0 p-0 d-flex" style="margin-top: 8px;">
+                            <input type="text" class="form-control" id="usernametwitter" style="width: 200px; height: 40px;"
+                              placeholder="Enter Twitter Account User Name without @" name="usernametwitter"/>
+                           
+                            <div>
+                              <button type="submit" class="btn logoutbtn btn-sm btn-success ml-5" style="margin-left: 5px;">Identify</button>
+                            </div>
+                          
+                          </div>
+                          <br>
+                        </form>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+        <div class="container-fluid p-0">
+            <!-- here i want to add graph -->
+            <div id="graph-body"></div>
+            <div id="info" style="display: none; position: absolute;"></div>
+            <script type="text/javascript">
+                //Set margins and sizes
+                var margin = {
+                    top: 0,
+                    bottom: 50,
+                    right: 10,
+                    left: 10
+                };
+                var width = 760 - margin.left - margin.right;
+                var height = 500 - margin.top - margin.bottom;
+                //Load Color Scale
+                // var c10 = d3.scale.category10();
+                var colorScale = d3.scale.linear()
+                    .domain([0, 50, 100])
+                    .range(["green", "yellow", "red"]);
+
+                var quantizedScale = d3.scale.quantize()
+                    .domain([0, 100])
+                    .range(d3.range(9).map(function (i) { return "q" + i + "-9"; }));
+
+                //Create an SVG element and append it to the DOM
+                var svgElement = d3.select("#graph-body")
+                    .append("svg").attr({ "width": width + margin.left + margin.right, "height": height + margin.top + margin.bottom })
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                
+                //Dummy Data
+                dummyData = {
+    "nodes": [
+        {
+            "username": "HumansNoContext",
+            "character": "A",
+            "id": 0,
+            "influence": 66,
+            "zone": 6,
+            "pol": 1
+        },
+        {
+            "username": "eldsjal",
+            "character": "B",
+            "id": 1,
+            "influence": 40,
+            "zone": 1,
+            "pol": 2
+        },
+        {
+            "username": "ThierryBreton",
+            "character": "C",
+            "id": 2,
+            "influence": 90,
+            "zone": 1,
+            "pol": 0
+        },
+        {
+            "username": "ChrisJBakke",
+            "character": "D",
+            "id": 3,
+            "influence": 70,
+            "zone": 0,
+            "pol": 1
+        },
+        {
+            "username": "konstructivizm",
+            "character": "E",
+            "id": 4,
+            "influence": 50,
+            "zone": 5,
+            "pol": 2
+        },
+        {
+            "username": "RepJeffries",
+            "character": "F",
+            "id": 5,
+            "influence": 30,
+            "zone": 2,
+            "pol": 0
+        },
+        {
+            "username": "DuffelBlog",
+            "character": "G",
+            "id": 6,
+            "influence": 80,
+            "zone": 5,
+            "pol": 0
+        },
+        {
+            "username": "csa_asc",
+            "character": "H",
+            "id": 7,
+            "influence": 60,
+            "zone": 2,
+            "pol": 1
+        },
+        {
+            "username": "DefiantLs",
+            "character": "K",
+            "id": 8,
+            "influence": 0,
+            "zone": 3,
+            "pol": 2
+        },
+        {
+            "username": "ShitpostGate",
+            "character": "L",
+            "id": 9,
+            "influence": 50,
+            "zone": 6,
+            "pol": 0
+        }
+    ],
+    "links": [
+        {
+            "source": 9,
+            "target": 0,
+            "weight": 6
+        },
+        {
+            "source": 2,
+            "target": 8,
+            "weight": 6
+        },
+        {
+            "source": 4,
+            "target": 6,
+            "weight": 6
+        },
+        {
+            "source": 7,
+            "target": 5,
+            "weight": 6
+        },
+        {
+            "source": 7,
+            "target": 8,
+            "weight": 6
+        },
+        {
+            "source": 9,
+            "target": 1,
+            "weight": 6
+        },
+        {
+            "source": 0,
+            "target": 8,
+            "weight": 6
+        },
+        {
+            "source": 3,
+            "target": 1,
+            "weight": 6
+        },
+        {
+            "source": 2,
+            "target": 5,
+            "weight": 6
+        },
+        {
+            "source": 5,
+            "target": 4,
+            "weight": 6
+        },
+    ]
+}
+                
+                //Load External Data
+                
+                var jsonData = '{{graph}}';
+                console.log("my data\n",jsonData);
+                
+                function htmlDecode(input) {
+                var e = document.createElement('textarea');
+                e.innerHTML = input;
+                return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+            }
+            
+            
+                 function drawGraph(dataset) {
+                    console.log("type of dataset data\n",typeof(dataset));
+                    console.log("dataset data\n",dataset);
+                    //Extract data from dataset
+                    var nodes = dataset.nodes,
+                        links = dataset.links;
+                    
+                    console.log("links\n",links);
+                    console.log("nodes\n",(nodes));
+                    //Create Force Layout
+                    var force = d3.layout.force()
+                        .size([width, height])
+                        .nodes(nodes)
+                        .links(links)
+                        .gravity(0.05)
+                        .charge(-1000)
+                        .linkDistance(200);
+
+                    var defs = svgElement.append("defs");
+
+                    var link = svgElement.selectAll(".link")
+                        .data(links)
+                        .enter()
+                        .append("line")
+                        .attr("stroke-width", function (d) { return d.weight / 10; })
+                        .attr("class", "link")
+                        .attr("marker-end", "url(#triangle)");
+
+                    // Add defs and marker elements to the SVG element
+                    svgElement.append("svg:defs").append("svg:marker")
+                        .attr("id", "triangle")
+                        .data(nodes)
+                        .attr("refX", function (d) {
+                            return d.influence / 3.5 + 40
+                        })
+                        .attr("refY", 6)
+                        .attr("markerWidth", 40)
+                        .attr("markerHeight", 40)
+                        .attr("orient", "auto")
+                        .append("path")
+                        .attr("d", "M 0 0 12 6 0 12 3 6")
+                        .style("fill", "black");
+
+
+                    //Add nodes to SVG
+                    var node = svgElement.selectAll(".node")
+                        .data(nodes)
+                        .enter()
+                        .append("g")
+                        .attr("class", "node")
+                        .call(force.drag)
+
+                    //Add labels to each node
+                    var label = node.append("text")
+                        .attr("dx", function (d) { return d.influence > 50 ? 28 : 12; })
+                        .attr("dy", "0.35em")
+                        .attr("font-size", function (d) { return d.influence * 0.3 > 9 ? d.influence * 0.3 : 9; })
+                        .text(function (d) { return d.character; });
+
+
+                    node.on("mouseover", function (d) {
+
+                        var mousePos = d3.mouse(svgElement.node());
+                        var mouseX = mousePos[0];
+                        var mouseY = mousePos[1];
+
+                        d3.select("#info")
+                            .style("left", (d3.event.pageX - 40) + "px")
+                            .style("top", (d3.event.pageY - 45) + "px")
+                            .style("display", "block")
+                            .text(function () {
+                                if (d.pol === 0) {
+                                    return "Positive, Average: " + d.influence;
+                                } else if (d.pol === 1) {
+                                    return "Negative, Average: " + d.influence;
+                                } else {
+                                    return "Neutral, Average: " + d.influence;
+                                }
+                            });
+
+
+
+
+
+                        // Keep the hovered node and linked nodes visible
+                        node.filter(function (n) {
+                            return n.id === d.id || dataset.links.some(l => l.source.id === d.id && l.target.id === n.id || l.source.id === n.id && l.target.id === d.id);
+                        }).transition().duration(200)
+                            .style("opacity", 1);
+
+                        link.filter(function (l) {
+                            return l.source.id === d.id || l.target.id === d.id;
+                        }).transition().duration(200)
+                            .style("opacity", 1);
+
+                        // Make all other nodes and links blurry
+                        node.filter(function (n) {
+                            return n.id !== d.id && !dataset.links.some(l => l.source.id === d.id && l.target.id === n.id || l.source.id === n.id && l.target.id === d.id);
+                        }).transition().duration(200)
+                            .style("opacity", 0.1);
+
+                        link.filter(function (l) {
+                            return l.source.id !== d.id && l.target.id !== d.id;
+                        }).transition().duration(200)
+                            .style("opacity", 0.1);
+                    })
+                        .on("mouseout", function () {
+                            // Hide the info
+                            d3.select("#info")
+                                .style("display", "none");
+
+
+                            // Show all nodes and links
+                            node.transition().duration(200).style("opacity", 1);
+                            link.transition().duration(200).style("opacity", 1);
+                        })
+
+
+                    var circle = node.append("circle")
+                        .attr("r", function (d) { return d.influence / 3.5 > 5 ? d.influence / 3.5 : 10; })
+                        .attr("fill", function (d) {
+                            if (d.pol === 0) {
+                                // Positive node
+                                if (d.influence < 30)
+                                    return "#98FB98"
+                                else if (d.influence < 65)
+                                    return "#00FF00"
+                                else
+                                    return "#006400"
+                            } else if (d.pol === 1) {
+                                // Negative node
+                                if (d.influence < 30)
+                                    return "#FFCCCB"
+                                else if (d.influence < 65)
+                                    return "#FF0000"
+                                else
+                                    return "#8B0000"
+                            } else {
+                                // Neutral node
+                                if (d.influence < 30)
+                                    return "#FFFACD"
+                                else if (d.influence < 65)
+                                    return "#F0E68C"
+                                else
+                                    return "#FFFF00"
+                            }
+                        })
+                        ;
+                    //This function will be executed for every tick of force layout 
+                    force.on("tick", function () {
+                        //Set X and Y of node
+                        node.attr("r", function (d) { return d.influence; })
+                            .attr("cx", function (d) { return d.x; })
+                            .attr("cy", function (d) { return d.y; });
+                        //Set X, Y of link
+                        link.attr("x1", function (d) { return d.source.x; })
+                        link.attr("y1", function (d) { return d.source.y; })
+                        link.attr("x2", function (d) { return d.target.x; })
+                        link.attr("y2", function (d) { return d.target.y; });
+                        //Shift node a little
+                        node.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+                    });
+                    //Start the force layout calculation
+                    force.start();
+                };
+                if (jsonData)
+                {
+                    var decodedData = htmlDecode(jsonData);
+
+                    console.log("decoded data\n",decodedData);
+                        
+                    parsedData = JSON.parse(decodedData);
+                    console.log("parsed data\n",parsedData);
+                    drawGraph(parsedData);
+                }
+                else
+                    drawGraph(dummyData);
+            </script>
+        </div>
+
+
+
+        <section class="row section-1" style="align-items: flex-start;">
+           <div >
+            <h5 class="mt-3" style="font-size: 24px; margin-left: 10px; letter-spacing: 1px; text-align: start; margin-bottom: 10px;">
+                Followings Analysis Results of <span class="bg-info text-light resultss p-2"
+                    style=" letter-spacing: 1px; margin-bottom: 10px; margin-left:5px;">{{acountname}}</span></h5>
+           </div>
+            <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col border border-info rounded"
+                style="overflow-y:scroll; height: 480px;width: 49%;box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2);  margin-bottom: 5px; background-color: #EEEEEE; margin-left: 10px; margin-right: 5px;">
+
+                <div>
+                    <table class="table table-striped">
+                        <thead class="table-head">
+                            <tr>
+                                <th >#</th>
+                                <th >Following Name</th>
+                                <th>Pos %</th>
+                                <th >Neg %</th>
+                                <th >Neu %</th>
+                                <th >Average</th>
+                            </tr>
+                          
+                        </thead>
+                        {% for f_name,fpos,fneg,fneu,avg in following_result %}
+                        <tr class="bg-dark">
+                            <td class="text-light ">{{ forloop.counter }}</td>
+                            <td class="text-light ">{{f_name}}</td>
+                            <td class="text-light ">{{fpos}}</td>
+                            <td class="text-light">{{fneg}}</td>
+                            <td class="text-light">{{fneu}}</td>
+                            <td class="text-light">{{avg}}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col border border-info rounded"
+                style="box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2); width: 49%; background-color: #EEEEEE; margin-bottom: 5px; margin-left: 5px; height: 480px;">
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <!-- <h5 class="mt-3">Fetch Tweets</h5> -->
+
+
+                        <div class="sentiment-chart">
+                            <!-- Chart goes here -->
+                            <canvas id="sentimentChart" class="sentiment-chart"></canvas>
+
+                        </div>
+                        <div class="d-flex p-3 bg-light" style="letter-spacing: 1px;">
+                            <div class=" t">
+                                Total Followings<span class="bg-info text-light resultss">{{total_users}}</span> =
+                            </div>
+
+                            <div class=" ">
+                                &nbsp Positive <span class="bg-info text-light resultss">{{no_pos_user}}</span> +
+                            </div>
+
+                            <div class="">
+                                &nbsp Negative <span class="bg-info text-light resultss">{{no_neg_user}}</span> +
+                            </div>
+
+                            <div class="">
+                                &nbsp Neutral <span class="bg-info text-light resultss">{{no_neu_user}}</span>
+                            </div>
+
+                        </div>
+
+                        <div class="p-2" style="margin-top: 15px; letter-spacing: 1px; text-align: start;">
+                            <span class="bg-dark text-light p-3 m-1  rounded" style="font-size: 14px;">Average:</span>
+                            <span class="bg-info text-light p-3 m-1  rounded"
+                                style="font-size: 14; height: 15px; width:40px;">{{avg_total}}</span>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    </section>
+    <script>
+        // Set up the chart data
+
+        const data = {
+            labels: ['Positive', 'Negative', 'Neutral'],
+            datasets: [{
+                data: ['{{ positive_user}}', '{{ negative_user }}', '{{ neutral_user}}']
+                ,
+                backgroundColor: ['#b8e986', '#ffb3b3', '#ffffb3']
+            }]
+        };
+
+
+        // Get the canvas element and the chart context
+        const canvas = document.getElementById('sentimentChart');
+        const ctx = canvas.getContext('2d');
+
+        // Create the pie chart
+        const pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        fontSize: 16
+                    }
+                }
+            }
+        });
+
+    </script>
+
+
+    </section>
+
+
+
+
+    </div>
+    {%endblock%}

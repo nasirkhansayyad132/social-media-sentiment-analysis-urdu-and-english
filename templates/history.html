@@ -1,0 +1,539 @@
+{%extends 'base.html'%}
+{% load static %}
+{% block content%}
+<style>
+  .section-1 {
+    font-size: 1em;
+    /* Increase the font size */
+    font-family: Arial, sans-serif;
+    /* Set the font family */
+    color: #333;
+    /* Set the text color to a dark gray */
+   
+    /* Set the background color to a light gray */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    /* Add a subtle text shadow */
+  }
+.resultss{
+  border: 2px #0DCAF0 solid;
+  border-radius: 10px;
+  padding: 3px;
+  height: 20px;
+  width: 20px;
+}
+  .button {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid blue;
+    border-right: 16px solid green;
+    border-bottom: 16px solid red;
+    width: 110px;
+    height: 110px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+
+  .button:active {
+    background: #007a63;
+  }
+
+  .button__text {
+    font: bold 30px "Quicksand", san-serif;
+    color: #ffffff;
+    transition: all 0.2s;
+  }
+
+  .button--loading .button__text {
+    visibility: hidden;
+    opacity: 0;
+  }
+  .sentiment-chart {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+  .button--loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 4px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+  }
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+  .h1 {
+    font-size: 2em;
+    /* Increase the font size */
+    font-family: Arial, sans-serif;
+    /* Set the font family */
+    color: #0DCAF0;
+    /* Set the text color to a dark gray */
+    background: #eee;
+    /* Set the background color to a light gray */
+    text-shadow: 15px 15px 15px rgba(0, 0, 0, 0.1);
+    /* Add a subtle text shadow */
+    text-align: center;
+    padding-top: 5px;
+  }
+ 
+  @-webkit-keyframes spin {
+    0% {
+      -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+<body style="color:#ffffff">
+
+
+  <div class="container-fluid bg-light  ">
+    <h2 class="h1 m-0">Single Account Identification on Twitter</h2>
+    <!-- <div class="container-fluid">
+        
+            <img class="container-fluid" src="{% static 'images/newbg.png' %}" alt="My image">
+            
+        </div> 
+        <br><br> -->
+    <section class="row" style="width: 50%; margin-left: 20%; " >
+      <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xxl-12 grid-col">
+        <div class="rounded   " style="justify-content: center;">
+          <ul class="nav nav-tabs " id="myTab" role="tablist">
+            <!-- <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                  role="tab" aria-controls="home" aria-selected="true">Fetch Tweets
+              </button>
+          </li> -->
+            <li>
+              <p style="font-size: 20px; margin: 5px; margin-left: 15%;"> </p>
+              <form action="" method="post">
+                {% csrf_token %}
+                <div class="mb-0 p-0 d-flex" style="margin-top: 8px;">
+                    
+                    <input type="text" class="form-control" id="usernametwitter" style="width:200px ; height:40px;" placeholder="Enter Twitter Account User Name without @ " name="usernametwitter">
+                    <!-- <select name="dropdown_value" class="form-control" id="data-source" style="width:100px; height:40px; margin-right:5px; margin-left: 15px;">
+                      <option value="twitter">Twitter</option>
+                      <option value="database">Database</option>
+                  </select> -->
+                    <div>
+                        <button type="submit" class="btn btn-sm btn-success p-2" style="margin-left: 5px;">Go</button>
+                    </div>
+                    <div class="d-flex align-items-center" style="margin-left: 10%;">
+                      <span style="margin-right: 10px;font-weight: bold; font-size: 16px">History</span>
+                      <select name="time_range" class="form-control" id="time-range" style="width: 150px; height: 40px;">
+                        <option value="2weeks">Within 2 Weeks</option>
+                        <option value="one_month">Within 1 Month</option>
+                        <option value="two_months">Within 2 Months</option>
+                      </select>
+                    </div>
+                    
+                </div>
+                <br>
+            </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="container-fluid bg-light  ">
+
+
+    <section class="row section-1"  >
+      <h5 class="mt-3" style="font-size: 24px; margin-left: 10px; letter-spacing: 1px; margin-bottom: 10px;">Analysis Results of <span class="bg-info text-light resultss p-2" style=" letter-spacing: 1px; margin-bottom: 10px; margin-left:5px;">{{acountname}}</span></h5>
+      <div  class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col border border-info rounded" style="overflow-y:scroll; height: 480px;width: 49%;box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2);  margin-bottom: 5px; background-color: #EEEEEE; margin-left: 10px; margin-right: 5px;" >
+        {% if "err" in context %}
+        <p>{{ context.err }}</p>
+                   {% else %}
+        <div >
+          <table class="table table-striped">
+            
+            <thead>
+                <tr>
+                    <th>No-Tweets</th>
+                    <th>Tweet</th>
+                    <th>Class Label</th>
+                    <th>Score</th>
+                    <th>predicted Label</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tweet_key, tweet in CNN.items %}
+                    <tr class="border-bottom border-danger">
+                        <td colspan="4" class="bg-info">{{ tweet_key }}</td>
+                        <td>{{tweet.predicted_label}}</td>
+                    </tr>
+                    {% for sentence_key, sentence_value in tweet.items %}
+                        {% if sentence_key != 'predicted_label' %}
+                            {% with sentence_text=sentence_value.0 score=sentence_value.1 class_label=sentence_value.2 %}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ sentence_text }}</td>
+                                    <td>{{ class_label }}</td>
+                                    <td>{{ score }}</td>
+                                </tr>
+                            {% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+            
+        </table>
+        
+        
+        
+     
+        
+      </div>
+      {% endif %}
+      </div>
+      <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col border border-info rounded" style="box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2); width: 49%; background-color: #EEEEEE; margin-bottom: 5px; margin-left: 5px; height: 480px;">
+
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <!-- <h5 class="mt-3">Fetch Tweets</h5> -->
+
+            
+            <div class="sentiment-chart">
+              <!-- Chart goes here -->
+              <canvas id="sentimentChart" class="sentiment-chart"></canvas>
+
+            </div>
+            <div class="d-flex p-3 bg-light" style="letter-spacing: 1px;">
+              <div class=" t">
+                Total Tweets <span class="bg-info text-light resultss">{{total_tweets}}</span>  =  
+              </div>
+
+              <div class=" ">
+                &nbsp Positive Tweets <span class="bg-info text-light resultss">{{pos_tweets}}</span>   +  
+              </div>
+
+              <div class=""> 
+                &nbsp Negative Tweets  <span class="bg-info text-light resultss">{{neg_tweets}}</span>   +  
+              </div> 
+
+              <div class="">
+                &nbsp Neutral Tweets <span class="bg-info text-light resultss">{{neu_tweets}}</span>
+              </div>
+
+            </div>
+
+            <div class="p-2" style="margin-top: 15px; letter-spacing: 1px;">
+              <span class="bg-dark text-light p-3 m-1  rounded" style="font-size: 14px;">Average:</span>
+              <span class="bg-info text-light p-3 m-1  rounded"
+                style="font-size: 14; height: 15px; width:40px;">{{avg}}</span>
+                <span class="bg-dark text-light p-3 m-1  rounded" style="font-size: 14px;">Date Saved:</span>
+                <span class="bg-info text-light p-3 m-1  rounded"
+                  style="font-size: 14; height: 15px; width:40px;">{{date_saved}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  </section>
+
+  <!-- BERT -->
+  <section class="row section-1" >
+    <h1>BERT Results</h1>
+    <div  class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col border border-info rounded" style="overflow-y:scroll; height: 480px;width: 49%;box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2);  margin-bottom: 5px; background-color: #EEEEEE; margin-left: 10px; margin-right: 5px;" >
+     
+      <div >
+        <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th>No-Tweets</th>
+                  <th>Tweet</th>
+                  <th>Class Label</th>
+                  <th>Score</th>
+                  <th>predicted Label</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for tweet_key, tweet in BERT.items %}
+                  <tr class="border-bottom border-danger">
+                      <td colspan="4" class="bg-info">{{ tweet_key }}</td>
+                      <td>{{tweet.predicted_label}}</td>
+                  </tr>
+                  {% for sentence_key, sentence_value in tweet.items %}
+                      {% if sentence_key != 'predicted_label' %}
+                          {% with sentence_text=sentence_value.0 score=sentence_value.1 class_label=sentence_value.2 %}
+                              <tr>
+                                  <td></td>
+                                  <td>{{ sentence_text }}</td>
+                                  <td>{{ class_label }}</td>
+                                  <td>{{ score }}</td>
+                              </tr>
+                          {% endwith %}
+                      {% endif %}
+                  {% endfor %}
+              {% endfor %}
+          </tbody>
+      </table>
+      
+      
+      
+   
+      
+    </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xxl-6 grid-col border border-info rounded" style="box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.2); width: 49%; background-color: #EEEEEE; margin-bottom: 5px; margin-left: 5px; height: 480px;">
+
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+          <!-- <h5 class="mt-3">Fetch Tweets</h5> -->
+
+          
+          <div class="sentiment-chart">
+            <!-- Chart goes here -->
+            <canvas id="BERTCHART" class="sentiment-chart"></canvas>
+
+          </div>
+          <div class="d-flex p-3 bg-light" style="letter-spacing: 1px;">
+            <div class=" t">
+              Total Tweets <span class="bg-info text-light resultss">{{total_tweets}}</span>  =  
+            </div>
+
+            <div class=" ">
+              &nbsp Positive Tweets <span class="bg-info text-light resultss">{{pos_tweetsb}}</span>   +  
+            </div>
+
+            <div class=""> 
+              &nbsp Negative Tweets  <span class="bg-info text-light resultss">{{neg_tweetsb}}</span>   +  
+            </div> 
+
+            <div class="">
+              &nbsp Neutral Tweets <span class="bg-info text-light resultss">{{neu_tweetsb}}</span>
+            </div>
+
+          </div>
+
+          <div class="p-2" style="margin-top: 15px; letter-spacing: 1px;">
+            <span class="bg-dark text-light p-3 m-1  rounded" style="font-size: 14px;">Average:</span>
+            <span class="bg-info text-light p-3 m-1  rounded"
+              style="font-size: 14; height: 15px; width:40px;">{{avgb}}</span>
+              <span class="bg-dark text-light p-3 m-1  rounded" style="font-size: 14px;">Date Saved:</span>
+            <span class="bg-info text-light p-3 m-1  rounded"
+              style="font-size: 14; height: 15px; width:40px;">{{date_saved}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+</section>
+
+<script>
+
+
+  const data = {
+    labels: ['Positive', 'Negative', 'Neutral'],
+    datasets: [{
+      data: ['{{ pos_avg }}', '{{ neg_avg }}', '{{ neu_avg}}']
+      ,
+      backgroundColor: ['#b8e986', '#ffb3b3', '#ffffb3']
+    }]
+  };
+
+  const dataBert = {
+    labels: ['Positive', 'Negative', 'Neutral'],
+    datasets: [{
+      data: ['{{ pos_avgb }}', '{{ neg_avgb }}', '{{ neu_avgb}}']
+      ,
+      backgroundColor: ['#b8e986', '#ffb3b3', '#ffffb3']
+    }]
+  };
+
+
+  // Get the canvas element and the chart context
+  const canvas = document.getElementById('sentimentChart');
+  const canvasBert = document.getElementById('BERTCHART');
+
+  const cty = canvasBert.getContext('2d')
+
+  const pieChart1 = new Chart(cty, {
+    type: 'pie',
+    data: dataBert,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        position: 'bottom',
+        labels: {
+          fontSize: 16
+        }
+      }
+    }
+  });
+
+  const ctx = canvas.getContext('2d');
+  
+  // Create the pie chart
+  const pieChart = new Chart(ctx, {
+    type: 'pie',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        position: 'bottom',
+        labels: {
+          fontSize: 16
+        }
+      }
+    }
+  });
+
+  // bert
+
+  
+
+</script>
+<script>
+  
+</script>
+
+
+
+
+</div>
+{%endblock%}
+
+  <!-- <script>
+    // Set up the chart data
+//     document.getElementById('save_to_db').addEventListener('click', function(){
+//       var csrf_token = $('[name=csrfmiddlewaretoken]').val();
+//       const mytweet = "{{tweets}}"
+//       mycontext = {
+//                     'result':"{{tweets_result_array}}",
+//                     'tweets_array':"{{tweets}}",
+//                     'avg':"{{avg}}",
+//                     'total_tweets':"{{total_tweets}}",
+//                     'pos_avg':"{{pos_avg}}",
+//                     'neg_avg':"{{neg_avg}}",
+//                     'neu_avg':"{{neu_avg}}", 
+//                     'pos_tweets': "{{pos}}",
+//                     'neg_tweets':"{{neg}}", 
+//                     'neu_tweets':"{{neu}}",
+//                     'acountname': "{{acountname}}",
+//                     }
+//                     console.log("mycontext",mycontext)
+//                     console.log("my tweet",mytweet)            
+//       $.post('{% url "save_to_db" %}', {context: mycontext, csrfmiddlewaretoken: csrf_token},
+//        function(data){
+//         console.log(data);
+//     });
+// });
+
+// console.log("mymessag","{{message}}")
+
+// document.getElementById('save_to_db').addEventListener('click', function(){
+//     var csrf_token = $('[name=csrfmiddlewaretoken]').val();
+//     $.ajax({
+//             url: 'save_to_db',
+//             type: 'POST',
+//             headers: { "X-CSRFToken": csrf_token },
+//             success: function(response) {
+//                 console.log(response);
+//             }
+//     });
+// });
+
+// $.ajax({
+//     url: 'save_to_db',
+//     type: 'POST',
+//     headers: { "X-CSRFToken": csrf_token },
+//     success: function(response) {
+//         var message = response.message;
+//         if(message){
+//             // display the message
+//             $("#message-container").text(message);
+//         }
+//     }
+// });
+
+
+// if(response.message) {
+//   var messageContainer = document.querySelector('.alert-container');
+//   messageContainer.classList.remove('hidden');
+//   messageContainer.innerHTML = response.message;
+// }
+
+
+    const data = {
+      labels: ['Positive', 'Negative', 'Neutral'],
+      datasets: [{
+        data: ['{{ pos_avg }}', '{{ neg_avg }}', '{{ neu_avg}}']
+        ,
+        backgroundColor: ['#b8e986', '#ffb3b3', '#ffffb3']
+      }]
+    };
+
+
+    // Get the canvas element and the chart context
+    const canvas = document.getElementById('sentimentChart');
+    const ctx = canvas.getContext('2d');
+
+    // Create the pie chart
+    const pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+          position: 'bottom',
+          labels: {
+            fontSize: 16
+          }
+        }
+      }
+    });
+
+  </script>
+
+
+
+  </div> -->
